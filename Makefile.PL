@@ -25,7 +25,8 @@ WriteMakefile(
         # build/test prereqs
         'Cwd'               => '0',
         'IO::File'          => '0',
-        'Test::More'        => '0.70'
+        'Test::More'        => '0.70',
+        'Test::Output'      => '0'
 
     }
 );

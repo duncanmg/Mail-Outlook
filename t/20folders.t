@@ -1,92 +1,66 @@
 #!/usr/bin/perl -w
 use strict;
+use warnings;
 
-# no strict 'subs';
+use Test::More;
+use Test::Output qw/combined_from/;
 
-use Test::More tests => 14;
+use_ok('Win32::OLE')                || goto END;
+use_ok('Alien::Microsoft::Outlook') || goto END;
+use_ok('Mail::Outlook')             || goto END;
 
-use lib 't/testlib';
+my $outlook = Mail::Outlook->new('Inbox');
+ok( $outlook,
+    "Created a Mail::Outlook object using the constructor argument 'Inbox'" );
 
-my $tests = 14;
+my $folder = $outlook->folder();
+isa_ok( $folder, 'Mail::Outlook::Folder' );
+ok( !Win32::OLE->LastError(), "No Win32::OLE::LastError" );
 
-eval {
+test_basic_operations($folder);
 
-  SKIP: {
-        eval "use Typelibs";
-        skip "Microsoft Outlook doesn't appear to be installed\n", $tests
-          if ($@);
-
-        my $vers = Typelibs::ExistsTypeLib('Microsoft Outlook');
-        skip "Microsoft Outlook doesn't appear to be installed\n", $tests
-          unless ($vers);
-
-        eval "use Mail::Outlook";
-        skip "Unable to make a connection to Microsoft Outlook\n", $tests
-          if ($@);
-
-        my $outlook = Mail::Outlook->new('Inbox');
-        my $folder  = $outlook->folder();
-        isa_ok( $folder, 'Mail::Outlook::Folder' );
-
-        my $message = $folder->first;
-        isa_ok( $message, 'Mail::Outlook::Message' );
-
-        my $name = $message->From();
-        skip "Access to Microsoft Outlook has been declined", ( $tests - 2 )
-          unless ($name);
-        ok( $name, "name is true" );
-
-        $message = $folder->next;
-        isa_ok( $message, 'Mail::Outlook::Message' );
-        ok( $message->From(),
-            "folder->next() return a message with a true From method." );
-
-        $folder  = $outlook->folder('Inbox');
-        $message = $folder->last;
-        isa_ok( $message, 'Mail::Outlook::Message' );
-        ok( $message->From(),
-            "folder->last() return a message with a true From method." );
-
-        $message = $folder->previous;
-        isa_ok( $message, 'Mail::Outlook::Message' );
-        ok( $message->From(),
-            "folder->previous() return a message with a true From method." );
-
+# Win32::OLE emits some noise which we aren't interested in unless the test fails.
+my $combined_output = combined_from(
+    sub {
         $folder = $outlook->folder('Inbox/ANameThatShouldNotExist');
-        is( $folder, undef,
-            'Got undef when looking for Inbox/ANameThatShouldNotExist' );
-        $folder = $outlook->folder('ANameThatShouldNotExist');
-        is( $folder, undef,
-            'Got undef when looking for ANameThatShouldNotExist' );
-
-        eval {
-            my $olFolderInbox = 0;
-
-            eval "use Win32::OLE::Constttt 'Microsoft Outlook'; "
-              . "\$olFolderInbox = olFolderInbox;";
-            ok( !$olFolderInbox, "Correctly handling non-existent package." );
-            eval "use Win32::OLE::Const 'Microsoft Outlookkkkk'; "
-              . "\$olFolderInbox = olFolderInbox;";
-            ok( !$olFolderInbox, "Correctly handling non-existent library." );
-
-            eval "use Win32::OLE::Const 'Microsoft Outlook'; "
-              . "\$olFolderInbox = olFolderInbox;";
-
-          SKIP: {
-                skip "Unable to make a connection to Microsoft Outlook. $@", 1
-                  if !$olFolderInbox;
-                $folder = $outlook->folder($olFolderInbox);
-                isa_ok( $folder, 'Mail::Outlook::Folder' );
-
-                1;
-            }
-        } || diag($@);
-
     }
+);
+is( $folder, undef, 'Got undef when looking for Inbox/ANameThatShouldNotExist' )
+  || diag($combined_output);
 
-};
+$folder = $outlook->folder('ANameThatShouldNotExist');
+is( $folder, undef, 'Got undef when looking for ANameThatShouldNotExist' );
 
-if ( $@ =~ /Network problems/ ) {
-    skip "Microsoft Outlook cannot connect to the server.\n", $tests;
-    exit;
+END:
+
+done_testing;
+
+# This won't work unless there are at least two messages in the folder.
+sub test_basic_operations {
+    my $folder = shift;
+
+    test_operation( sub { $folder->first; }, "first" );
+
+    test_operation( sub { $folder->next; }, "next" );
+
+    test_operation( sub { $folder->last; }, "last" );
+
+    test_operation( sub { $folder->previous; }, "previous" );
+
+    return 1;
+
 }
+
+sub test_operation {
+    my ( $command, $message ) = @_;
+    my $mail_message = $command->();
+    ok( $mail_message,
+        "Retrieved a mail message using the method \"$message\"." );
+    ok( !Win32::OLE->LastError(), "No Win32::OLE::LastError" );
+    isa_ok( $mail_message, 'Mail::Outlook::Message' ) || return;
+    ok( $mail_message->From(),
+        "The message has a From method with returns true. "
+          . $mail_message->From() );
+    return 1;
+}
+
