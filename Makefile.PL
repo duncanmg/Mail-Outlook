@@ -26,7 +26,12 @@ WriteMakefile(
         'Cwd'               => '0',
         'IO::File'          => '0',
         'Test::More'        => '0.70',
-        'Test::Output'      => '0'
+        'Test::Output'      => '0',
+        'Test::Pod'         => '1.26',
+        'Test::Pod::Coverage' => '1.08',
+        'Test::CPAN::Meta' => '0',
+        'Test::CPAN::Meta::JSON' => '0',
+        'Test::MockObject' => '0',
 
     }
 );
