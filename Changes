@@ -1,5 +1,10 @@
 Revision history for Perl distribution Mail-Outlook.
 
+0.23    2014-02-08
+        Fixed 39711. Can now move a message from one folder to another.
+        Fixed 29599. Can now list the names of the subfolders in a folder.
+        Fixed 65393. Can now send mail from more than one account.
+                
 0.22    2013-12-16
         Fix syntax error.
 

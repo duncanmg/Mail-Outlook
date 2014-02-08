@@ -20,7 +20,10 @@ t/13attachments.t
 t/14send.t
 t/15read.t
 t/20folders.t
+t/21all_folders.t
+t/22move.t
 t/30failures.t
+t/40multiple_accounts.t
 t/90podtest.t
 t/91podcover.t
 t/94metatest.t
