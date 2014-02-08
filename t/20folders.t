@@ -5,6 +5,7 @@ use warnings;
 use Test::More;
 use Test::Output qw/combined_from/;
 
+BEGIN { use_ok( 'Win32::OLE::Const', 'Microsoft Outlook' ); }
 use_ok('Win32::OLE')                || goto END;
 use_ok('Alien::Microsoft::Outlook') || goto END;
 use_ok('Mail::Outlook')             || goto END;
@@ -31,6 +32,10 @@ is( $folder, undef, 'Got undef when looking for Inbox/ANameThatShouldNotExist' )
 $folder = $outlook->folder('ANameThatShouldNotExist');
 is( $folder, undef, 'Got undef when looking for ANameThatShouldNotExist' );
 
+$outlook = Mail::Outlook->new(olFolderInbox);
+ok( $outlook,
+"Created a Mail::Outlook object using the constant olFolderInbox as a constructor argument."
+);
 END:
 
 done_testing;
@@ -38,6 +43,14 @@ done_testing;
 # This won't work unless there are at least two messages in the folder.
 sub test_basic_operations {
     my $folder = shift;
+
+    my $count = $folder->count_items();
+    ok( $count >= 2, "Folder contains $count items" ) || do {
+        diag(
+"This won't work unless there are at least two messages in the folder"
+        );
+        return;
+    };
 
     test_operation( sub { $folder->first; }, "first" );
 
