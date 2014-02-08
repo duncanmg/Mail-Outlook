@@ -138,8 +138,11 @@ sub send {
     my $self = shift;
 
     return 0    unless($self->_make_message(@_));
-
+    
     eval {
+    
+        $self->{message}->{SendUsingAccount} = $self->{use_account} if $self->{use_account};
+        
         # Send the email
         $self->{message}->Send();
     };
@@ -196,6 +199,24 @@ sub delete_message {
 
     $self->{message}->Delete();
     $self = undef;
+}
+
+=item use_account
+
+This can be used to specify the account from which this email
+will be sent.
+
+$m->use_account( $account_object );
+
+where $account_object has be retrieved using the all_accounts method of the Outlook 
+object.
+
+=cut
+
+sub use_account {
+  my ( $self, $account_obj ) = @_;
+  $self->{use_account} = $account_obj;
+  return 1;
 }
 
 # -------------------------------------
