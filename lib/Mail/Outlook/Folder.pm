@@ -93,9 +93,8 @@ sub new {
         my %keys = map {$_ => 1} keys %$hash;
         return undef    if($@);
 
-        eval { $folder = $mailbox->Folders($path); 1; } || return undef; 
-	return undef if($@); 
-        return undef unless( defined($folder) );
+        $folder = $self->_folders($mailbox, $path) || return undef; 
+
     }
 
     # create an attributes hash
@@ -112,6 +111,20 @@ sub new {
     # create the object
     bless $atts, $self;
     return $atts;
+}
+
+# Split the path (eg A/B/C) into segments call call the Folder method for each. 
+# Unix style separators (/).
+sub _folders {
+  my ($self,$mailbox, $path)=@_;
+  my @segs = split('/', $path );
+  my $f;
+  foreach my $s ( @segs ) {
+    eval { $f = $f ? $f->Folders($s) : $mailbox->Folders($s);1;}||return undef;
+    return undef if($@); 
+    return undef unless( defined($f) );    
+  }
+  return $f;
 }
 
 =item DESTROY
@@ -185,7 +198,8 @@ Move a message into this folder.
 sub move {
     my ($self,$message) = @_;
 
-    $message->Move($self->{objfolder});
+    $message->{message}->Move($self->{objfolder});
+    return 1;
 }
 
 =item move_folder($folder)
@@ -197,7 +211,7 @@ Move a folder into this folder.
 sub move_folder {
     my ($self,$folder) = @_;
 
-    $folder->{objfolder}->MoveTo($self->{objfolder});
+    $folder->{objfolder}->Move($self->{objfolder});
 }
 
 =item delete_folder()
@@ -211,6 +225,35 @@ sub delete_folder {
 
     $self->{objfolder}->Delete();
     $self = undef;
+}
+
+=item all_folders
+
+List the names of all folders in this folder.
+
+=cut
+
+sub all_folders {
+  my $self = shift;
+  my $folders = $self->{objfolder}->Folders || [];
+  my @folder_names = ();
+  my $num_folders = $folders->{Count};
+  for( my $i=1; $i <= $num_folders; $i++ ) {
+    push( @folder_names, $folders->Item($i)->Name );
+  }
+  return @folder_names;
+  1;
+}
+
+=item count_items
+
+Return the number of items in the folder.
+
+=cut
+
+sub count_items {
+  my $self = shift;
+  my $count = $self->{objfolder}->Items->Count;
 }
 
 1;
