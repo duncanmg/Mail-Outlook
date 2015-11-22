@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION $AUTOLOAD);
-$VERSION = '0.23';
+$VERSION = '0.24';
 
 #----------------------------------------------------------------------------
 
