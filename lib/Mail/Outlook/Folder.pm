@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = '0.24';
+$VERSION = '0.25';
 
 #----------------------------------------------------------------------------
 
@@ -264,25 +264,25 @@ __END__
 
 =back
 
-=head1 FURTHER READING
+#=head1 FURTHER READING
 
-If you intend to supply a patch for a bug or new feature, please visit the
-following URL (and associated pages) to ensure you are using the correct
-objects and methods.
+#If you intend to supply a patch for a bug or new feature, please visit the
+#following URL (and associated pages) to ensure you are using the correct
+#objects and methods.
 
-http://msdn.microsoft.com/library/default.asp?url=/library/en-us/off2000/html/olobjApplication.asp
+#http://msdn.microsoft.com/library/default.asp?url=/library/en-us/off2000/html/olobjApplication.asp
 
-This article contains some interesting background into creating mail
-messages via Outlook, although it is VB-centric.
+#This article contains some interesting background into creating mail
+#messages via Outlook, although it is VB-centric.
 
-http://www.exchangeadmin.com/Articles/Index.cfm?ArticleID=4657
+#http://www.exchangeadmin.com/Articles/Index.cfm?ArticleID=4657
 
-=head1 FUTURE ENHANCEMENTS
+#=head1 FUTURE ENHANCEMENTS
 
-A couple of items that I'd like to get working.
+#A couple of items that I'd like to get working.
 
-* X-Header support
-* Send without the popups (Outlook Redemption looks possible)
+#* X-Header support
+#* Send without the popups (Outlook Redemption looks possible)
 
 =head1 NOTES
 
@@ -299,7 +299,10 @@ Outlook (R) installed.
 
 =head1 BUGS, PATCHES & FIXES
 
-There are no known bugs at the time of this release. However, if you spot a
+There are some minor items under "Issues" , but there are no known serious bugs 
+at the time of this release. 
+
+However, if you spot a
 bug or are experiencing difficulties that are not explained within the POD
 documentation, please submit a bug to the RT system (see link below). However,
 it would help greatly if you are able to pinpoint problems or even supply a
@@ -319,6 +322,8 @@ RT: L<http://rt.cpan.org/Public/Dist/Display.html?Name=Mail-Outlook>
 =head1 COPYRIGHT AND LICENSE
 
   Copyright E<copy> 2003-2013 Barbie for Miss Barbell Productions.
+
+  Copyright E<copy> 2014-2016 Duncan Garland.
 
   This distribution is free software; you can redistribute it and/or
   modify it under the Artistic License v2.

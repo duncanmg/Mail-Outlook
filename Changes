@@ -1,5 +1,10 @@
 Revision history for Perl distribution Mail-Outlook.
 
+0.25    2016-01-16
+        Removed "Further Reading" from the POD. The links were out of date
+        and I don't know of any good new ones. Also removed "Future
+        Enhancements" and modified the copyright.
+        
 0.24    2015-11-22
         Added MANIFEST.SKIP file.
         
